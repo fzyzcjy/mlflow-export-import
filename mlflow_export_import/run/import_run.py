@@ -63,9 +63,15 @@ class RunImporter():
         src_run_path = os.path.join(input_dir,"run.json")
         src_run_dct = utils.read_json_file(src_run_path)
 
-        run = self.mlflow_client.create_run(exp.experiment_id,
-                                            # #466
-                                            start_time=src_run_dct["info"]["start_time"])
+        # #470
+        run = self.mlflow_client._tracking_client.store.create_run(
+            experiment_id=exp.experiment_id,
+            user_id='unknown',
+            # #466
+            start_time=src_run_dct["info"]["start_time"],
+            tags=[],
+            run_name=src_run_dct["info"]["run_name"],
+        )
         run_id = run.info.run_id
 
         try:
