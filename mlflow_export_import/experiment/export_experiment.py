@@ -93,13 +93,16 @@ class ExperimentExporter():
     show_default=True
 )
 @click.option("--notebook-formats",
-    help=click_doc.notebook_formats, 
-    type=str, 
-    default="", 
-    show_default=True
+              help=click_doc.notebook_formats,
+              type=str,
+              default="",
+              show_default=True
+              )
+@click.option("--run-id",
+    type=str,
 )
 
-def main(experiment, output_dir, export_metadata_tags, notebook_formats):
+def main(experiment, output_dir, export_metadata_tags, notebook_formats, run_id):
     print("Options:")
     for k,v in locals().items():
         print(f"  {k}: {v}")
@@ -107,7 +110,7 @@ def main(experiment, output_dir, export_metadata_tags, notebook_formats):
         mlflow_client=None, 
         export_metadata_tags=export_metadata_tags, 
         notebook_formats=utils.string_to_list(notebook_formats))
-    exporter.export_experiment(experiment, output_dir)
+    exporter.export_experiment(experiment, output_dir, run_ids=[run_id])
 
 if __name__ == "__main__":
     main()
