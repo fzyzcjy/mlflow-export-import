@@ -63,8 +63,11 @@ class RunImporter():
         src_run_path = os.path.join(input_dir,"run.json")
         src_run_dct = utils.read_json_file(src_run_path)
 
-        run = self.mlflow_client.create_run(exp.experiment_id)
+        run = self.mlflow_client.create_run(exp.experiment_id,
+                                            # #466
+                                            start_time=src_run_dct["info"]["start_time"])
         run_id = run.info.run_id
+
         try:
             self._import_run_data(src_run_dct, run_id, src_run_dct["info"]["user_id"])
             path = os.path.join(input_dir,"artifacts")
@@ -81,6 +84,15 @@ class RunImporter():
         if utils.importing_into_databricks() and dst_notebook_dir:
             ndir = os.path.join(dst_notebook_dir, run_id) if self.dst_notebook_dir_add_run_id else dst_notebook_dir
             self._upload_databricks_notebook(input_dir, src_run_dct, ndir)
+
+        # #466
+        self.mlflow_client._tracking_client.store.update_run_info(
+            run_id=run_id,
+            run_status=RunStatus.from_string(src_run_dct["info"]["run_status"]), # NOTE
+            end_time=src_run_dct["info"]["start_time"], # NOTE
+            run_name=run.info.run_name,
+        )
+
         return (run, src_run_dct["tags"].get(utils.TAG_PARENT_ID,None))
 
     def _update_mlmodel_run_id(self, run_id):
