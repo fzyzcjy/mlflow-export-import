@@ -110,7 +110,7 @@ def main(experiment, output_dir, export_metadata_tags, notebook_formats, run_id)
         mlflow_client=None, 
         export_metadata_tags=export_metadata_tags, 
         notebook_formats=utils.string_to_list(notebook_formats))
-    exporter.export_experiment(experiment, output_dir, run_ids=[run_id])
+    exporter.export_experiment(experiment, output_dir, run_ids=[run_id] if run_id else None)
 
 if __name__ == "__main__":
     main()
