@@ -71,6 +71,8 @@ class RunImporter():
             start_time=src_run_dct["info"]["start_time"],
             tags=[],
             run_name=src_run_dct["info"]["run_name"],
+            # #470; NOTE: need to change mlflow source code as well
+            force_run_id=src_run_dct["info"]["run_id"],
         )
         run_id = run.info.run_id
 
