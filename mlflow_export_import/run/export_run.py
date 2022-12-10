@@ -66,25 +66,27 @@ class RunExporter:
         path = os.path.join(output_dir, "run.json")
         utils.write_json_file(fs, path, dct)
 
-        # copy artifacts
-        dst_path = os.path.join(output_dir,"artifacts")
-        try:
-            TAG_NOTEBOOK_PATH = "mlflow.databricks.notebookPath"
-            artifacts = self.mlflow_client.list_artifacts(run.info.run_id)
-            if len(artifacts) > 0: # Because of https://github.com/mlflow/mlflow/issues/2839
-                fs.mkdirs(dst_path)
-                self.mlflow_client.download_artifacts(run.info.run_id, "", dst_path=mk_local_path(dst_path))
-            notebook = tags.get(TAG_NOTEBOOK_PATH, None)
-            if notebook is not None:
-                if len(self.notebook_formats) > 0:
-                    self._export_notebook(output_dir, notebook, run.data.tags, fs)
-            elif len(self.notebook_formats) > 0:
-                print(f"WARNING: Cannot export notebook since tag '{TAG_NOTEBOOK_PATH}' is not set.")
-            return True
-        except Exception as e:
-            print("ERROR: run_id:", run.info.run_id, "Exception:", e)
-            traceback.print_exc()
-            return False
+        print('hack: skip export artifacts')
+        # # copy artifacts
+        # dst_path = os.path.join(output_dir,"artifacts")
+        # try:
+        #     TAG_NOTEBOOK_PATH = "mlflow.databricks.notebookPath"
+        #     artifacts = self.mlflow_client.list_artifacts(run.info.run_id)
+        #     if len(artifacts) > 0: # Because of https://github.com/mlflow/mlflow/issues/2839
+        #         fs.mkdirs(dst_path)
+        #         self.mlflow_client.download_artifacts(run.info.run_id, "", dst_path=mk_local_path(dst_path))
+        #     notebook = tags.get(TAG_NOTEBOOK_PATH, None)
+        #     if notebook is not None:
+        #         if len(self.notebook_formats) > 0:
+        #             self._export_notebook(output_dir, notebook, run.data.tags, fs)
+        #     elif len(self.notebook_formats) > 0:
+        #         print(f"WARNING: Cannot export notebook since tag '{TAG_NOTEBOOK_PATH}' is not set.")
+        #     return True
+        # except Exception as e:
+        #     print("ERROR: run_id:", run.info.run_id, "Exception:", e)
+        #     traceback.print_exc()
+        #     return False
+        return True
 
     def _export_notebook(self, output_dir, notebook, tags, fs):
         notebook_dir = os.path.join(output_dir, "artifacts", "notebooks")
