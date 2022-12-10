@@ -96,7 +96,7 @@ class RunImporter():
         # #466
         self.mlflow_client._tracking_client.store.update_run_info(
             run_id=run_id,
-            run_status=src_run_dct["info"].get('status', RunStatus.from_string(run.info.status)),
+            run_status=RunStatus.to_string(src_run_dct["info"].get('status', RunStatus.from_string(run.info.status))),
             end_time=src_run_dct["info"]["end_time"], # NOTE
             run_name=src_run_dct["info"]["run_name"],
         )
